@@ -1,4 +1,5 @@
 # @@@SNIPSTART data-pipeline-activity-python
+import logging
 from dataclasses import dataclass
 from typing import List
 
@@ -6,6 +7,9 @@ import aiohttp
 from temporalio import activity
 
 TASK_QUEUE_NAME = "temporal-community-task-queue"
+
+# Logging configuration
+logging.basicConfig(level=logging.INFO)
 
 
 @dataclass
@@ -32,6 +36,7 @@ async def get_top_posts(post_ids: List[str]) -> List[TemporalCommunityPost]:
     results: List[TemporalCommunityPost] = []
     async with aiohttp.ClientSession() as session:
         for item_id in post_ids:
+            logging.info("Fetching post %s", item_id)
             async with session.get(
                 f"https://community.temporal.io/t/{item_id}.json"
             ) as response:
