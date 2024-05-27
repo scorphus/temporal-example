@@ -16,7 +16,7 @@ class TemporalCommunityPost:
 
 
 @activity.defn
-async def post_ids() -> List[str]:
+async def get_post_ids() -> List[str]:
     async with aiohttp.ClientSession() as session, session.get(
         "https://community.temporal.io/latest.json"
     ) as response:
@@ -28,7 +28,7 @@ async def post_ids() -> List[str]:
 
 
 @activity.defn
-async def top_posts(post_ids: List[str]) -> List[TemporalCommunityPost]:
+async def get_top_posts(post_ids: List[str]) -> List[TemporalCommunityPost]:
     results: List[TemporalCommunityPost] = []
     async with aiohttp.ClientSession() as session:
         for item_id in post_ids:

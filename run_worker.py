@@ -4,7 +4,7 @@ import asyncio
 from temporalio.client import Client
 from temporalio.worker import Worker
 
-from activities import TASK_QUEUE_NAME, post_ids, top_posts
+from activities import TASK_QUEUE_NAME, get_post_ids, get_top_posts
 from your_workflow import TemporalCommunityWorkflow
 
 
@@ -14,7 +14,7 @@ async def main():
         client,
         task_queue=TASK_QUEUE_NAME,
         workflows=[TemporalCommunityWorkflow],
-        activities=[top_posts, post_ids],
+        activities=[get_top_posts, get_post_ids],
     )
     await worker.run()
 
