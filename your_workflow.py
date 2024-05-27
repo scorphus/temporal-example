@@ -1,6 +1,6 @@
 # @@@SNIPSTART data-pipeline-your-workflow-python
 from datetime import timedelta
-from typing import Any, List
+from typing import List
 
 from temporalio import workflow
 

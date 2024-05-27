@@ -1,6 +1,6 @@
 # @@@SNIPSTART data-pipeline-activity-python
 from dataclasses import dataclass
-from typing import Any, List
+from typing import List
 
 import aiohttp
 from temporalio import activity
