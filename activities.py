@@ -32,26 +32,26 @@ async def get_post_ids() -> List[str]:
 
 
 @activity.defn
-async def get_top_posts(post_ids: List[str]) -> List[TemporalCommunityPost]:
-    results: List[TemporalCommunityPost] = []
-    async with aiohttp.ClientSession() as session:
-        for item_id in post_ids:
-            logging.info("Fetching post %s", item_id)
-            async with session.get(
-                f"https://community.temporal.io/t/{item_id}.json"
-            ) as response:
-                if response.status < 200 or response.status >= 300:
-                    raise RuntimeError(f"Status: {response.status}")
-                item = await response.json()
-                slug = item["slug"]
-                url = f"https://community.temporal.io/t/{slug}/{item_id}"
-                community_post = TemporalCommunityPost(
-                    title=item["title"], url=url, views=item["views"]
-                )
-                results.append(community_post)
-    results.sort(key=lambda x: x.views, reverse=True)
-    top_ten = results[:10]
-    return top_ten
+async def fetch_post(item_id: str) -> TemporalCommunityPost:
+    logging.info("Fetching post %s ...", item_id)
+    async with aiohttp.ClientSession() as session, session.get(
+        f"https://community.temporal.io/t/{item_id}.json"
+    ) as response:
+        if response.status < 200 or response.status >= 300:
+            raise RuntimeError(f"Status: {response.status}")
+        item = await response.json()
+        slug = item["slug"]
+        url = f"https://community.temporal.io/t/{slug}/{item_id}"
+        post = TemporalCommunityPost(title=item["title"], url=url, views=item["views"])
+        logging.info("Fetched post %s", post.url)
+    return post
+
+
+@activity.defn
+def get_top_posts(
+    posts: List[TemporalCommunityPost],
+) -> List[TemporalCommunityPost]:
+    return sorted(posts, key=lambda x: x.views, reverse=True)[:10]
 
 
 # @@@SNIPEND
