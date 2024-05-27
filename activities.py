@@ -17,11 +17,12 @@ class TemporalCommunityPost:
 
 @activity.defn
 async def post_ids() -> List[str]:
-    async with aiohttp.ClientSession() as session:
-        async with session.get("https://community.temporal.io/latest.json") as response:
-            if not 200 <= int(response.status) < 300:
-                raise RuntimeError(f"Status: {response.status}")
-            post_ids = await response.json()
+    async with aiohttp.ClientSession() as session, session.get(
+        "https://community.temporal.io/latest.json"
+    ) as response:
+        if not 200 <= int(response.status) < 300:
+            raise RuntimeError(f"Status: {response.status}")
+        post_ids = await response.json()
 
     return [str(topic["id"]) for topic in post_ids["topic_list"]["topics"]]
 
