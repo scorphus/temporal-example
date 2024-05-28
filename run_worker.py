@@ -5,7 +5,13 @@ import concurrent.futures
 from temporalio.client import Client
 from temporalio.worker import Worker
 
-from activities import TASK_QUEUE_NAME, fetch_post, get_post_ids, get_top_posts
+from activities import (
+    TASK_QUEUE_NAME,
+    fetch_post,
+    get_post_ids,
+    get_top_posts,
+    get_top_tags,
+)
 from your_workflow import TemporalCommunityWorkflow
 
 
@@ -16,7 +22,7 @@ async def main():
             client,
             task_queue=TASK_QUEUE_NAME,
             workflows=[TemporalCommunityWorkflow],
-            activities=[fetch_post, get_post_ids, get_top_posts],
+            activities=[fetch_post, get_post_ids, get_top_posts, get_top_tags],
             activity_executor=activity_executor,
         )
         await worker.run()
@@ -24,4 +30,6 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
+
 # @@@SNIPEND

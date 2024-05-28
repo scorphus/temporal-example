@@ -11,16 +11,20 @@ from your_workflow import TemporalCommunityWorkflow
 async def main():
     client = await Client.connect("localhost:7233")
 
-    stories = await client.execute_workflow(
+    stories, top_tags = await client.execute_workflow(
         TemporalCommunityWorkflow.run,
         id="temporal-community-workflow",
         task_queue=TASK_QUEUE_NAME,
     )
     df = pd.DataFrame(stories)
-    df.columns = ["Title", "URL", "Views"]
+    df.columns = ["Title", "URL", "Tags", "Views"]
     print("Top 10 stories on Temporal Community:")
     print(df)
-    return df
+    df2 = pd.DataFrame(top_tags)
+    df2.columns = ["Tag", "Posts"]
+    print("Top 10 tags on Temporal Community:")
+    print(df2)
+    return df, df2
 
 
 if __name__ == "__main__":
