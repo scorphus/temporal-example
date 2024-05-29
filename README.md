@@ -17,14 +17,9 @@ You'll then implement a Schedule to Schedule Workflows on an interval to leverag
 ## Step 0: Prerequisites
 
 * Python >= 3.7
-* [Poetry](https://python-poetry.org)
 * [Local Temporal server running](https://docs.temporal.io/application-development/foundations#run-a-development-cluster)
 
-With this repository cloned, run the following at the root of the directory:
-
-```command
-poetry install
-```
+With this repository cloned, figure out what dependencies are needed to run the code.
 
 ## Start the Workflow
 
@@ -32,9 +27,9 @@ Start and run the Workflow with the following commands:
 
 ```command
 # terminal one
-poetry run python run_worker.py
+python run_worker.py
 # terminal two
-poetry run python run_workflow.py
+python run_workflow.py
 ```
 
 Terminate the Workflow with the following command:
