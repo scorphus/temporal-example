@@ -36,8 +36,6 @@ class ActivityBase(metaclass=ActivityMeta):
 
 
 class PostIDsGetter(ActivityBase):
-    name = "PostIDsGetter"
-
     async def __call__(self) -> List[str]:
         async with aiohttp.ClientSession() as session, session.get(
             "https://community.temporal.io/latest.json"
@@ -49,8 +47,6 @@ class PostIDsGetter(ActivityBase):
 
 
 class PostFetcher(ActivityBase):
-    name = "PostFetcher"
-
     async def __call__(self, item_id: str) -> TemporalCommunityPost:
         logging.info("Fetching post %s ...", item_id)
         async with aiohttp.ClientSession() as session, session.get(
@@ -72,8 +68,6 @@ class PostFetcher(ActivityBase):
 
 
 class TopPostsGetter(ActivityBase):
-    name = "TopPostsGetter"
-
     def __call__(
         self, posts: List[TemporalCommunityPost]
     ) -> List[TemporalCommunityPost]:
@@ -81,8 +75,6 @@ class TopPostsGetter(ActivityBase):
 
 
 class TopTagsGetter(ActivityBase):
-    name = "TopTagsGetter"
-
     def __call__(self, posts: List[TemporalCommunityPost]) -> List[Tuple[str, int]]:
         tag_counter: Counter[str] = Counter()
         for post in posts:
