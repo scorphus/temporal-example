@@ -31,7 +31,6 @@ class ActivityMeta(abc.ABCMeta):
 
 
 class ActivityBase(metaclass=ActivityMeta):
-
     pass
 
 

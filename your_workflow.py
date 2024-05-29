@@ -20,8 +20,7 @@ class TemporalCommunityWorkflow:
     @workflow.run
     async def run(self) -> Tuple[List[TemporalCommunityPost], List[Tuple[str, int]]]:
         news_ids = await workflow.execute_activity(
-            PostIDsGetter(),
-            start_to_close_timeout=timedelta(seconds=15),
+            PostIDsGetter(), start_to_close_timeout=timedelta(seconds=15)
         )
         activities = [
             workflow.execute_activity(
@@ -33,7 +32,6 @@ class TemporalCommunityWorkflow:
         top_posts = await workflow.execute_activity(
             TopPostsGetter(), posts, start_to_close_timeout=timedelta(seconds=15)
         )
-
         top_tags = await workflow.execute_activity(
             TopTagsGetter(), posts, start_to_close_timeout=timedelta(seconds=15)
         )
