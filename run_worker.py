@@ -10,7 +10,7 @@ from activities import (
     fetch_post,
     get_post_ids,
     get_top_posts,
-    get_top_tags,
+    TopTagsGetter,
 )
 from your_workflow import TemporalCommunityWorkflow
 
@@ -22,7 +22,12 @@ async def main():
             client,
             task_queue=TASK_QUEUE_NAME,
             workflows=[TemporalCommunityWorkflow],
-            activities=[fetch_post, get_post_ids, get_top_posts, get_top_tags],
+            activities=[
+                fetch_post,
+                get_post_ids,
+                get_top_posts,
+                TopTagsGetter(),
+            ],
             activity_executor=activity_executor,
         )
         await worker.run()

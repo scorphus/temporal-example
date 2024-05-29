@@ -11,7 +11,7 @@ with workflow.unsafe.imports_passed_through():
         fetch_post,
         get_post_ids,
         get_top_posts,
-        get_top_tags,
+        TopTagsGetter,
     )
 
 
@@ -34,7 +34,7 @@ class TemporalCommunityWorkflow:
             get_top_posts, posts, start_to_close_timeout=timedelta(seconds=15)
         )
         top_tags = await workflow.execute_activity(
-            get_top_tags, posts, start_to_close_timeout=timedelta(seconds=15)
+            TopTagsGetter(), posts, start_to_close_timeout=timedelta(seconds=15)
         )
         return stories, top_tags
 

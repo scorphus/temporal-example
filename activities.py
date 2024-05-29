@@ -56,11 +56,13 @@ def get_top_posts(posts: List[TemporalCommunityPost]) -> List[TemporalCommunityP
 
 
 @activity.defn
-def get_top_tags(posts: List[TemporalCommunityPost]) -> List[Tuple[str, int]]:
-    tag_counter: Counter[str] = Counter()
-    for post in posts:
-        tag_counter.update(post.tags)
-    return tag_counter.most_common(10)
+class TopTagsGetter:
+
+    def __call__(self, posts: List[TemporalCommunityPost]) -> List[Tuple[str, int]]:
+        tag_counter: Counter[str] = Counter()
+        for post in posts:
+            tag_counter.update(post.tags)
+        return tag_counter.most_common(10)
 
 
 # @@@SNIPEND
