@@ -7,9 +7,9 @@ from temporalio.worker import Worker
 
 from activities import (
     TASK_QUEUE_NAME,
-    fetch_post,
-    get_post_ids,
-    get_top_posts,
+    PostIDsGetter,
+    PostFetcher,
+    TopPostsGetter,
     TopTagsGetter,
 )
 from your_workflow import TemporalCommunityWorkflow
@@ -23,9 +23,9 @@ async def main():
             task_queue=TASK_QUEUE_NAME,
             workflows=[TemporalCommunityWorkflow],
             activities=[
-                fetch_post,
-                get_post_ids,
-                get_top_posts,
+                PostIDsGetter(),
+                PostFetcher(),
+                TopPostsGetter(),
                 TopTagsGetter(),
             ],
             activity_executor=activity_executor,

@@ -1,4 +1,5 @@
 # @@@SNIPSTART data-pipeline-activity-python
+import abc
 import logging
 from collections import Counter
 from dataclasses import dataclass
@@ -21,42 +22,66 @@ class TemporalCommunityPost:
     views: int
 
 
-@activity.defn
-async def get_post_ids() -> List[str]:
-    async with aiohttp.ClientSession() as session, session.get(
-        "https://community.temporal.io/latest.json"
-    ) as response:
-        if not 200 <= int(response.status) < 300:
-            raise RuntimeError(f"Status: {response.status}")
-        post_ids = await response.json()
-    return [str(topic["id"]) for topic in post_ids["topic_list"]["topics"]]
+class ActivityMeta(abc.ABCMeta):
+    def __new__(mcs, name, bases, namespace) -> "ActivityMeta":
+        new_cls = super().__new__(mcs, name, bases, namespace)
+        if name == "ActivityBase":
+            return new_cls
+        return activity.defn(new_cls)
 
 
-@activity.defn
-async def fetch_post(item_id: str) -> TemporalCommunityPost:
-    logging.info("Fetching post %s ...", item_id)
-    async with aiohttp.ClientSession() as session, session.get(
-        f"https://community.temporal.io/t/{item_id}.json"
-    ) as response:
-        if response.status < 200 or response.status >= 300:
-            raise RuntimeError(f"Status: {response.status}")
-        item = await response.json()
-        slug = item["slug"]
-        url = f"https://community.temporal.io/t/{slug}/{item_id}"
-        post = TemporalCommunityPost(
-            title=item["title"], url=url, tags=item.get("tags", []), views=item["views"]
-        )
-        logging.info("Fetched post %s", post.url)
-    return post
+class ActivityBase(metaclass=ActivityMeta):
+
+    pass
 
 
-@activity.defn
-def get_top_posts(posts: List[TemporalCommunityPost]) -> List[TemporalCommunityPost]:
-    return sorted(posts, key=lambda x: x.views, reverse=True)[:10]
+class PostIDsGetter(ActivityBase):
+    name = "PostIDsGetter"
+
+    async def __call__(self) -> List[str]:
+        async with aiohttp.ClientSession() as session, session.get(
+            "https://community.temporal.io/latest.json"
+        ) as response:
+            if not 200 <= int(response.status) < 300:
+                raise RuntimeError(f"Status: {response.status}")
+            post_ids = await response.json()
+        return [str(topic["id"]) for topic in post_ids["topic_list"]["topics"]]
 
 
-@activity.defn
-class TopTagsGetter:
+class PostFetcher(ActivityBase):
+    name = "PostFetcher"
+
+    async def __call__(self, item_id: str) -> TemporalCommunityPost:
+        logging.info("Fetching post %s ...", item_id)
+        async with aiohttp.ClientSession() as session, session.get(
+            f"https://community.temporal.io/t/{item_id}.json"
+        ) as response:
+            if response.status < 200 or response.status >= 300:
+                raise RuntimeError(f"Status: {response.status}")
+            item = await response.json()
+            slug = item["slug"]
+            url = f"https://community.temporal.io/t/{slug}/{item_id}"
+            post = TemporalCommunityPost(
+                title=item["title"],
+                url=url,
+                tags=item.get("tags", []),
+                views=item["views"],
+            )
+            logging.info("Fetched post %s", post.url)
+        return post
+
+
+class TopPostsGetter(ActivityBase):
+    name = "TopPostsGetter"
+
+    def __call__(
+        self, posts: List[TemporalCommunityPost]
+    ) -> List[TemporalCommunityPost]:
+        return sorted(posts, key=lambda x: x.views, reverse=True)[:10]
+
+
+class TopTagsGetter(ActivityBase):
+    name = "TopTagsGetter"
 
     def __call__(self, posts: List[TemporalCommunityPost]) -> List[Tuple[str, int]]:
         tag_counter: Counter[str] = Counter()
