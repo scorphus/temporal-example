@@ -30,13 +30,14 @@ class TemporalCommunityWorkflow:
             for news_id in news_ids
         ]
         posts = await asyncio.gather(*activities)
-        stories = await workflow.execute_activity(
+        top_posts = await workflow.execute_activity(
             TopPostsGetter(), posts, start_to_close_timeout=timedelta(seconds=15)
         )
+
         top_tags = await workflow.execute_activity(
             TopTagsGetter(), posts, start_to_close_timeout=timedelta(seconds=15)
         )
-        return stories, top_tags
+        return top_posts, top_tags
 
 
 # @@@SNIPEND
