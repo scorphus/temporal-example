@@ -36,12 +36,14 @@ class ActivityBase(metaclass=ActivityMeta):
 
 class PostIDsGetter(ActivityBase):
     async def __call__(self) -> List[str]:
+        logging.info("Fetching post IDs ...")
         async with aiohttp.ClientSession() as session, session.get(
             "https://community.temporal.io/latest.json"
         ) as response:
             if not 200 <= int(response.status) < 300:
                 raise RuntimeError(f"Status: {response.status}")
             post_ids = await response.json()
+        logging.info("Fetched post IDs")
         return [str(topic["id"]) for topic in post_ids["topic_list"]["topics"]]
 
 
@@ -70,11 +72,13 @@ class TopPostsGetter(ActivityBase):
     def __call__(
         self, posts: List[TemporalCommunityPost]
     ) -> List[TemporalCommunityPost]:
+        logging.info("Sorting out top posts ...")
         return sorted(posts, key=lambda x: x.views, reverse=True)[:10]
 
 
 class TopTagsGetter(ActivityBase):
     def __call__(self, posts: List[TemporalCommunityPost]) -> List[Tuple[str, int]]:
+        logging.info("Sorting out top tags ...")
         tag_counter: Counter[str] = Counter()
         for post in posts:
             tag_counter.update(post.tags)
