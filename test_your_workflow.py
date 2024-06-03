@@ -43,6 +43,14 @@ def fixture_post_fetcher(session_mocker):
     session_mocker.patch("your_workflow.PostFetcher", return_value=post_fetcher_mock)
 
 
+@pytest.fixture(autouse=True)
+def fixture_reset_activities_delay():
+    original_delay = activities.DELAY
+    activities.DELAY = 0
+    yield
+    activities.DELAY = original_delay
+
+
 @pytest.mark.asyncio
 async def test_execute_workflow():
     task_queue_name = str(uuid.uuid4())
