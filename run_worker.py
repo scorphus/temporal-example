@@ -8,8 +8,8 @@ from temporalio.worker import Worker
 
 from activities import (
     TASK_QUEUE_NAME,
-    PostIDsGetter,
     PostFetcher,
+    PostIDsGetter,
     TopPostsGetter,
     TopTagsGetter,
 )

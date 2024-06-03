@@ -7,9 +7,9 @@ from temporalio import workflow
 
 with workflow.unsafe.imports_passed_through():
     from activities import (
-        TemporalCommunityPost,
-        PostIDsGetter,
         PostFetcher,
+        PostIDsGetter,
+        TemporalCommunityPost,
         TopPostsGetter,
         TopTagsGetter,
     )
