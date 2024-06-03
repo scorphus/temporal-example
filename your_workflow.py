@@ -20,20 +20,20 @@ class TemporalCommunityWorkflow:
     @workflow.run
     async def run(self) -> Tuple[List[TemporalCommunityPost], List[Tuple[str, int]]]:
         news_ids = await workflow.execute_activity(
-            PostIDsGetter(), start_to_close_timeout=timedelta(seconds=15)
+            PostIDsGetter(), start_to_close_timeout=timedelta(minutes=6)
         )
         activities = [
             workflow.execute_activity(
-                PostFetcher(), news_id, start_to_close_timeout=timedelta(seconds=15)
+                PostFetcher(), news_id, start_to_close_timeout=timedelta(minutes=6)
             )
             for news_id in news_ids
         ]
         posts = await asyncio.gather(*activities)
         top_posts = await workflow.execute_activity(
-            TopPostsGetter(), posts, start_to_close_timeout=timedelta(seconds=15)
+            TopPostsGetter(), posts, start_to_close_timeout=timedelta(minutes=6)
         )
         top_tags = await workflow.execute_activity(
-            TopTagsGetter(), posts, start_to_close_timeout=timedelta(seconds=15)
+            TopTagsGetter(), posts, start_to_close_timeout=timedelta(minutes=6)
         )
         return top_posts, top_tags
 
