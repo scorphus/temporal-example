@@ -44,7 +44,7 @@ class PostIDsGetter(ActivityBase):
     async def __call__(self) -> List[str]:
         logging.info("Fetching post IDs ...")
         # Simulate a delay:
-        await asyncio.sleep(DELAY * (random.random() + 1))
+        await asyncio.sleep(DELAY * random.random())
         async with aiohttp.ClientSession() as session, session.get(
             "https://community.temporal.io/latest.json"
         ) as response:
@@ -59,7 +59,7 @@ class PostFetcher(ActivityBase):
     async def __call__(self, item_id: str) -> TemporalCommunityPost:
         logging.info("Fetching post %s ...", item_id)
         # Simulate a delay:
-        await asyncio.sleep(DELAY * (random.random() + 1))
+        await asyncio.sleep(DELAY * random.random())
         async with aiohttp.ClientSession() as session, session.get(
             f"https://community.temporal.io/t/{item_id}.json"
         ) as response:
@@ -84,7 +84,7 @@ class TopPostsGetter(ActivityBase):
     ) -> List[TemporalCommunityPost]:
         logging.info("Sorting out top posts ...")
         # Simulate a delay:
-        time.sleep(DELAY * (random.random() + 1))
+        time.sleep(DELAY * random.random())
         logging.info("Sorted out top posts")
         return sorted(posts, key=lambda x: x.views, reverse=True)[:10]
 
@@ -93,7 +93,7 @@ class TopTagsGetter(ActivityBase):
     def __call__(self, posts: List[TemporalCommunityPost]) -> List[Tuple[str, int]]:
         logging.info("Sorting out top tags ...")
         # Simulate a delay:
-        time.sleep(DELAY * (random.random() + 1))
+        time.sleep(DELAY * random.random())
         logging.info("Sorted out top tags")
         tag_counter: Counter[str] = Counter()
         for post in posts:
