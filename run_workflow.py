@@ -1,4 +1,3 @@
-# @@@SNIPSTART data-pipeline-run-workflow-python
 import asyncio
 
 import pandas as pd
@@ -16,19 +15,16 @@ async def main():
         id="temporal-community-workflow",
         task_queue=TASK_QUEUE_NAME,
     )
-    df = pd.DataFrame(top_posts)
-    df.columns = ["Title", "URL", "Tags", "Views"]
+    top_posts_df = pd.DataFrame(top_posts)
+    top_posts_df.columns = ["Title", "URL", "Tags", "Views"]
     print("Top 10 posts on Temporal Community:")
-    print(df)
-    df2 = pd.DataFrame(top_tags)
-    df2.columns = ["Tag", "Posts"]
+    print(top_posts_df)
+    top_tags_df = pd.DataFrame(top_tags)
+    top_tags_df.columns = ["Tag", "Posts"]
     print("Top 10 tags on Temporal Community:")
-    print(df2)
-    return df, df2
+    print(top_tags_df)
+    return top_posts_df, top_tags_df
 
 
 if __name__ == "__main__":
     asyncio.run(main())
-
-
-# @@@SNIPEND

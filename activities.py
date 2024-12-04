@@ -1,4 +1,3 @@
-# @@@SNIPSTART data-pipeline-activity-python
 import abc
 import asyncio
 import logging
@@ -6,7 +5,6 @@ import random
 import time
 from collections import Counter
 from dataclasses import dataclass
-from typing import List, Tuple
 
 import aiohttp
 from temporalio import activity
@@ -24,7 +22,7 @@ DELAY = 5
 class TemporalCommunityPost:
     title: str
     url: str
-    tags: List[str]
+    tags: list[str]
     views: int
 
 
@@ -41,7 +39,7 @@ class ActivityBase(metaclass=ActivityMeta):
 
 
 class PostIDsGetter(ActivityBase):
-    async def __call__(self) -> List[str]:
+    async def __call__(self) -> list[str]:
         logging.info("Fetching post IDs ...")
         # Simulate a delay:
         await asyncio.sleep(DELAY * random.random())
@@ -49,7 +47,8 @@ class PostIDsGetter(ActivityBase):
             "https://community.temporal.io/latest.json"
         ) as response:
             if not 200 <= int(response.status) < 300:
-                raise RuntimeError(f"Status: {response.status}")
+                msg = f"Status: {response.status}"
+                raise RuntimeError(msg)
             post_ids = await response.json()
         logging.info("Fetched post IDs")
         return [str(topic["id"]) for topic in post_ids["topic_list"]["topics"]]
@@ -64,7 +63,8 @@ class PostFetcher(ActivityBase):
             f"https://community.temporal.io/t/{item_id}.json"
         ) as response:
             if response.status < 200 or response.status >= 300:
-                raise RuntimeError(f"Status: {response.status}")
+                msg = f"Status: {response.status}"
+                raise RuntimeError(msg)
             item = await response.json()
             slug = item["slug"]
             url = f"https://community.temporal.io/t/{slug}/{item_id}"
@@ -80,8 +80,8 @@ class PostFetcher(ActivityBase):
 
 class TopPostsGetter(ActivityBase):
     def __call__(
-        self, posts: List[TemporalCommunityPost]
-    ) -> List[TemporalCommunityPost]:
+        self, posts: list[TemporalCommunityPost]
+    ) -> list[TemporalCommunityPost]:
         logging.info("Sorting out top posts ...")
         # Simulate a delay:
         time.sleep(DELAY * random.random())
@@ -90,7 +90,7 @@ class TopPostsGetter(ActivityBase):
 
 
 class TopTagsGetter(ActivityBase):
-    def __call__(self, posts: List[TemporalCommunityPost]) -> List[Tuple[str, int]]:
+    def __call__(self, posts: list[TemporalCommunityPost]) -> list[tuple[str, int]]:
         logging.info("Sorting out top tags ...")
         # Simulate a delay:
         time.sleep(DELAY * random.random())
@@ -99,6 +99,3 @@ class TopTagsGetter(ActivityBase):
         for post in posts:
             tag_counter.update(post.tags)
         return tag_counter.most_common(10)
-
-
-# @@@SNIPEND

@@ -1,7 +1,5 @@
-# @@@SNIPSTART data-pipeline-run-worker-python
 import asyncio
 import concurrent.futures
-from typing import Optional
 
 from temporalio.client import Client
 from temporalio.worker import Worker
@@ -26,7 +24,7 @@ async def main():
 def new_worker(
     client: Client,
     task_queue: str,
-    activity_executor: Optional[concurrent.futures.Executor] = None,
+    activity_executor: concurrent.futures.Executor | None = None,
 ) -> Worker:
     return Worker(
         client,
@@ -48,6 +46,3 @@ if __name__ == "__main__":
         asyncio.run(main())
     except KeyboardInterrupt:
         print("Worker stopped")
-
-
-# @@@SNIPEND

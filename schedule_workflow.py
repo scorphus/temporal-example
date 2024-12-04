@@ -1,4 +1,3 @@
-# @@@SNIPSTART data-pipeline-schedule-workflow-python
 import asyncio
 from datetime import timedelta
 
@@ -8,7 +7,6 @@ from temporalio.client import (
     ScheduleActionStartWorkflow,
     ScheduleIntervalSpec,
     ScheduleSpec,
-    ScheduleState,
 )
 
 from activities import TASK_QUEUE_NAME
@@ -34,4 +32,3 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-# @@@SNIPEND
